@@ -1,0 +1,9 @@
+jupyter
+numpy
+pillow
+scikit-image
+scipy
+torch
+torchvision
+tqdm
+dominate
