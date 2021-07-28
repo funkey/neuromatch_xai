@@ -4,8 +4,8 @@ from torch.nn import init
 import functools
 from torch.optim import lr_scheduler
 import torch.nn.functional as F
-from dac_networks.Vgg2D import Vgg2D
-from dac_networks.ResNet import ResNet
+from .Vgg2D import Vgg2D
+from .ResNet import ResNet
 
 ###############################################################################
 # Helper Functions
