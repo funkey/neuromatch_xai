@@ -23,12 +23,32 @@ from .options.train_options import TrainOptions
 from .data import create_dataset
 from .models import create_model
 from .util.visualizer import Visualizer
+import os
 
-def train():
-    print("Training CycleGAN!")
+def train(data_dir, class_A, class_B, img_size):
 
-if __name__ == '__main__':
-    opt = TrainOptions().parse()   # get training options
+    netG = 'resnet_9blocks'
+    data_root = os.path.join(data_dir, 'cycle_gan', class_A + '_' + class_B)
+    name = netG + '_' + class_A + '_' + class_B
+    checkpoints_dir = os.path.join('checkpoints', name)
+
+    print(f"Storing checkpoints of this training in {checkpoints_dir}")
+
+    args = [
+        '--dataroot', data_root,
+        '--name', name,
+        '--netG', netG,
+        '--load_size', str(img_size),
+        '--crop_size', str(img_size),
+        '--checkpoints_dir', checkpoints_dir
+    ]
+
+    opt = TrainOptions().parse(args)
+
+    train_loop(opt)
+
+def train_loop(opt):
+
     dataset = create_dataset(opt)  # create a dataset given opt.dataset_mode and other options
     dataset_size = len(dataset)    # get the number of images in the dataset.
     print('The number of training images = %d' % dataset_size)
@@ -80,3 +100,7 @@ if __name__ == '__main__':
 
         print('End of epoch %d / %d \t Time Taken: %d sec' % (epoch, opt.n_epochs + opt.n_epochs_decay, time.time() - epoch_start_time))
         model.update_learning_rate()                     # update learning rates at the end of every epoch.
+
+if __name__ == '__main__':
+    opt = TrainOptions().parse()   # get training options
+    train_loop(opt)

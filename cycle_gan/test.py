@@ -27,17 +27,52 @@ See training and test tips at: https://github.com/junyanz/pytorch-CycleGAN-and-p
 See frequently asked questions at: https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master/docs/qa.md
 """
 import os
-from options.test_options import TestOptions
+from .options.test_options import TestOptions
 import json
-from data import create_dataset
-from models import create_model
-from util.visualizer import save_images
-from util import html_util
+from .data import create_dataset
+from .models import create_model
+from .util.visualizer import save_images
+from .util import html_util
 import ntpath
 
+def test(data_dir, class_A, class_B, img_size, checkpoints_dir, vgg_checkpoint):
 
-if __name__ == '__main__':
-    opt = TestOptions().parse()  # get test options
+    netG = 'resnet_9blocks'
+    data_root = os.path.join(data_dir, 'cycle_gan', class_A + '_' + class_B)
+    results_dir = os.path.join(data_root, 'results')
+
+    # workaround for cycle_gan convention
+    name = os.path.basename(checkpoints_dir)
+    checkpoints_dir = os.path.dirname(checkpoints_dir)
+
+    args = [
+        '--model', 'test',
+        '--no_dropout',
+        '--results_dir', results_dir,
+        '--dataroot', data_root,
+        '--checkpoints_dir', checkpoints_dir,
+        '--name', name,
+        '--model_suffix', '_B',
+        '--num_test', '500',
+        '--aux_net', 'vgg2d',
+        '--aux_checkpoint', vgg_checkpoint,
+        '--aux_input_size', str(img_size),
+        '--aux_output_classes', '6',
+        '--aux_downsample_factors', '2,2x2,2x2,2x2,2',
+        '--aux_input_nc', '1',
+        '--num_threads', '1',
+        '--verbose',
+        '--netG', netG,
+        '--load_size', str(img_size),
+        '--crop_size', str(img_size),
+    ]
+
+    opt = TestOptions().parse(args)
+
+    test_loop(opt)
+
+def test_loop(opt):
+
     # hard-code some parameters for test
     opt.num_threads = 0   # test code only supports num_threads = 1
     opt.batch_size = 1    # test code only supports batch_size = 1
@@ -77,3 +112,7 @@ if __name__ == '__main__':
             print('processing (%04d)-th image... %s' % (i, img_path))
         save_images(webpage, visuals, img_path, aspect_ratio=opt.aspect_ratio, width=opt.display_winsize)
     webpage.save()  # save the HTML
+
+if __name__ == '__main__':
+    opt = TestOptions().parse()  # get test options
+    test_loop(opt)

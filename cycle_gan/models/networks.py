@@ -402,6 +402,8 @@ def define_AUX(checkpoint_path, input_size=128, aux_net="vgg2d", output_classes=
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     net.to(device)
     checkpoint = torch.load(checkpoint_path)
+    if 'model_state_dict' in checkpoint:
+        checkpoint = checkpoint['model_state_dict']
     net.load_state_dict(checkpoint)
     return net
 

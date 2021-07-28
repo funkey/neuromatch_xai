@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 import itertools
-from util.image_pool import ImagePool
+from cycle_gan.util.image_pool import ImagePool
 from .base_model import BaseModel
 from . import networks
 
