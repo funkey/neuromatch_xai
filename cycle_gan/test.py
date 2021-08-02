@@ -52,7 +52,7 @@ def test(data_dir, class_A, class_B, img_size, checkpoints_dir, vgg_checkpoint):
         '--dataroot', data_root,
         '--checkpoints_dir', checkpoints_dir,
         '--name', name,
-        '--model_suffix', '_B',
+        '--model_suffix', '_A',
         '--num_test', '500',
         '--aux_net', 'vgg2d',
         '--aux_checkpoint', vgg_checkpoint,
